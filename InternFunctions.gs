@@ -1,7 +1,9 @@
 var sapLen = 16;
 
-// Checks to see if manual validity check has been filled in yet
-// fills out the cell next to it
+/*
+* Checks to see if manual validity check has been filled in yet
+* fils out the cell next to it
+*/
 function checkValidity(input) {
   
   // if the user has not approved
@@ -26,7 +28,9 @@ function checkValidity(input) {
   }
 }
 
-// Gets the sheet name associated with the SAP Order from the list
+/*
+* Gets the sheet name associated with the SAP Order from the list
+*/
 function getSheetName(sheet, input) {
   var location = getSapOrdersLocation(sheet);
   
@@ -44,8 +48,10 @@ function getSheetName(sheet, input) {
   return(name);
 }
 
-// finds the location of the SAP Orders table in the spreadsheets
-// upper left hand corner
+/*
+* finds the location of the SAP Orders table in the spreadsheets
+* upper left hand corner
+*/
 function getSapOrdersLocation(sheet) {
   var sapName = 'SAP Orders';
   // gets all rows and columns
