@@ -1,18 +1,25 @@
+/*
+ * Used to create the menu that is used
+ */
 function onOpen() {
   var ui = SpreadsheetApp.getUi();
 
   ui.createMenu('Intern Menu')
       .addItem('Import Data', 'menuItem1')
-      .addItem('Update Confirmed Intern Timesheets', 'menuItem2')
+      .addItem('Push to Templates', 'menuItem2')
       .addItem('Approve All', 'menuItem3')
       .addItem('Clear Approvals', 'menuItem4')
       .addToUi();
 }
 
+/* 
+ * Function that loops through the interns and calls for an import of their data
+ */
 function menuItem1() {
   var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Intern Timesheets");
   var interns = sheet.getRange("Q3:S19").getValues();
   
+  // Loops through the interns and checks to see if they need a fetch
   for (var i = 0; i < interns.length; i++) {
     var url = interns[i][1];
     var destRange = interns[i][2];
@@ -21,10 +28,14 @@ function menuItem1() {
     
     importInternData(url, destRange);
   }
+  // sets all to yes then clears in an effort to refresh 
   menuItem3();
   menuItem4();
 }
 
+/*
+ * Loops through all the interns and adds their data to the correct templates
+ */
 function menuItem2() {
   var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Intern Timesheets");
   var interns = sheet.getRange("Q3:T19").getValues();
@@ -37,6 +48,9 @@ function menuItem2() {
   }
 }
 
+/*
+ * Sets all the times for interns to approved
+ */
 function menuItem3() {
   var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Intern Timesheets");
   sheet.getRange("J3:J17").setValue('Yes');
@@ -44,6 +58,9 @@ function menuItem3() {
   sheet.getRange("J43:J57").setValue("Yes");
 }
 
+/*
+ * Clears all the approval ratings for the interns
+ */
 function menuItem4() {
   var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Intern Timesheets");
   sheet.getRange("J3:J17").setValue(null);
@@ -51,6 +68,10 @@ function menuItem4() {
   sheet.getRange("J43:J57").setValue(null);
 }
 
+/*
+ * Using the url and the destination range pulls data from the URL spreadhseet
+ * and puts it in the current spreadsheet
+ */
 function importInternData(url, destRangeString) {
   var destSheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Intern Timesheets");
   var sourceSheet = SpreadsheetApp
@@ -61,6 +82,11 @@ function importInternData(url, destRangeString) {
   destRange.setValues(sourceRange);
 }
 
+/*
+ * Grabds the dtat from the specified intern and template range
+ * Loops through all the days and puts in correct template
+ * Inserts at the top
+ */
 function updateTemplate(intern, templateRange) {
   var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Intern Timesheets");
   var templates = sheet.getRange(templateRange);
