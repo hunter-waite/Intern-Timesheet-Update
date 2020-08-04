@@ -17,6 +17,7 @@ function onOpen() {
  */
 function menuItem1() {
   var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Intern Timesheets");
+  // location of the interns tab
   var interns = sheet.getRange("Q3:S19").getValues();
   
   // Loops through the interns and checks to see if they need a fetch
@@ -29,8 +30,8 @@ function menuItem1() {
     importInternData(url, destRange);
   }
   // sets all to yes then clears in an effort to refresh 
-  menuItem3();
   menuItem4();
+  menuItem3();
 }
 
 /*
@@ -83,7 +84,7 @@ function importInternData(url, destRangeString) {
 }
 
 /*
- * Grabds the dtat from the specified intern and template range
+ * Grabs the dtat from the specified intern and template range
  * Loops through all the days and puts in correct template
  * Inserts at the top
  */
@@ -94,7 +95,8 @@ function updateTemplate(intern, templateRange) {
   var newSheet = null;
   templates = templates.getValues();
   for (var i = 0; i < templates.length; i++) {
-    if(templates[i] == 'No Template' || templates[i] == "" || templates[i] == "Not Approved Yet") {
+    if(templates[i] == 'No Template' || templates[i] == "" || 
+       templates[i] == "Not Approved Yet" || sheet.getRange(initRow + i, 9).getValue() == "") {
       continue;
     }
     newSheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(templates[i]);
