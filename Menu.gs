@@ -7,6 +7,7 @@ function onOpen() {
   ui.createMenu('Intern Menu')
       .addItem('Import Data', 'menuItem1')
       .addItem('Push to Templates', 'menuItem2')
+      .addSeparator()
       .addItem('Approve All', 'menuItem3')
       .addItem('Clear Approvals', 'menuItem4')
       .addToUi();
@@ -30,8 +31,6 @@ function menuItem1() {
     importInternData(url, destRange);
   }
   // sets all to yes then clears in an effort to refresh 
-  menuItem4();
-  menuItem3();
 }
 
 /*
@@ -47,6 +46,7 @@ function menuItem2() {
     Logger.log(interns[0])
     updateTemplate(interns[i][0], interns[i][3]);
   }
+  sortSheets();
 }
 
 /*
@@ -57,6 +57,14 @@ function menuItem3() {
   sheet.getRange("J3:J17").setValue('Yes');
   sheet.getRange("J23:J37").setValue("Yes");
   sheet.getRange("J43:J57").setValue("Yes");
+  sheet.getRange("J63:J77").setValue("Yes");
+  sheet.getRange("J83:J97").setValue("Yes");
+  sheet.getRange("J103:J117").setValue("Yes");
+  sheet.getRange("J123:J137").setValue("Yes");
+  sheet.getRange("J143:J157").setValue("Yes");
+  sheet.getRange("J163:J177").setValue("Yes");
+  sheet.getRange("J183:J197").setValue("Yes");
+  sheet.getRange("J203:J217").setValue("Yes");
 }
 
 /*
@@ -67,6 +75,14 @@ function menuItem4() {
   sheet.getRange("J3:J17").setValue(null);
   sheet.getRange("J23:J38").setValue(null);
   sheet.getRange("J43:J57").setValue(null);
+  sheet.getRange("J63:J77").setValue(null);
+  sheet.getRange("J83:J97").setValue(null);
+  sheet.getRange("J103:J117").setValue(null);
+  sheet.getRange("J123:J137").setValue(null);
+  sheet.getRange("J143:J157").setValue(null);
+  sheet.getRange("J163:J177").setValue(null);
+  sheet.getRange("J183:J197").setValue(null);
+  sheet.getRange("J203:J217").setValue(null);
 }
 
 /*
@@ -86,7 +102,8 @@ function importInternData(url, destRangeString) {
 /*
  * Grabs the dtat from the specified intern and template range
  * Loops through all the days and puts in correct template
- * Inserts at the top
+ * Inserts at the top of correct template
+ * Clears the approved rows as it is parsed through
  */
 function updateTemplate(intern, templateRange) {
   var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Intern Timesheets");
@@ -94,7 +111,8 @@ function updateTemplate(intern, templateRange) {
   var initRow = templates.getRow();
   var newSheet = null;
   templates = templates.getValues();
-  for (var i = 0; i < templates.length; i++) {
+  for ( var i = 0 ; i < templates.length ; i++ ) {
+    var currRow = "A" + (initRow + i) + ":" + "J" + (initRow + i);
     if(templates[i] == 'No Template' || templates[i] == "" || 
        templates[i] == "Not Approved Yet" || sheet.getRange(initRow + i, 9).getValue() == "") {
       continue;
@@ -111,7 +129,26 @@ function updateTemplate(intern, templateRange) {
                    sheet.getRange(initRow + i, 7).getValue(),    // Hours
                    sheet.getRange(initRow + i, 8).getValue(),    // Rate
                    sheet.getRange(initRow + i, 9).getValue()]];  // Expenses
-      newSheet.insertRowBefore(11);
-      newSheet.getRange(11,1, 1, 8).setValues(newRow);
+    newSheet.insertRowBefore(11);
+    newSheet.getRange(11,1, 1, 8).setValues(newRow);
+    sheet.getRange(currRow).clearContent();
   }
 }
+
+function sortSheets() {
+  var sapSheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Intern Timesheets");
+  var sapValues = sapSheet.getRange("O3:O19").getValues();
+  
+  var sortCol = 4; //D column (date)
+  
+  for ( var i = 0; i < sapValues.length ; i++ ) {
+    var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(sapValues[i]);
+    if ( sheet == -1 || sheet ==  null  )
+      continue;
+    
+    var range = sheet.getRange("A11:H");
+  
+    range.sort( { column : sortCol, ascending : false } );
+  }
+}
+
